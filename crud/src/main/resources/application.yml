@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: crud
+server:
+  port: 8083
