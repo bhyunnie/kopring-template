@@ -27,6 +27,7 @@ test : test code
 ### example
 ```
 [feat]: 푸시 메세지 기능 구현
+
 [description]
 - 푸시 메세지 기능 구현
 ```
