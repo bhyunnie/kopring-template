@@ -2,10 +2,10 @@ package study.bhyunnie.synchronize.domain
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
-class Lock(
+class Locks(
 	@Id
-	val key: String,
-	val valid: Boolean
+	val keyName: String,
 )

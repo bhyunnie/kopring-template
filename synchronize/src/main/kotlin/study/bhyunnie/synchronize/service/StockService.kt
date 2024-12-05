@@ -39,7 +39,12 @@ class StockService(
 		stockRepository.save(stock)
 	}
 
-
-
-	fun namedLockDecrease(id:Long, quantity:Long) {}
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	fun namedLockDecrease(id:Long, quantity:Long) {
+		val stock = stockRepository.findById(id).orElseThrow {
+			RuntimeException("재고를 찾을 수 없습니다")
+		}
+		stock.decrease(quantity = quantity)
+		stockRepository.save(stock)
+	}
 }

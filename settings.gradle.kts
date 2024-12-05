@@ -3,7 +3,8 @@ rootProject.name = "kopring-template"
 include(
     "security",
     "websocket",
-    "crud"
+    "crud",
+    "synchronize"
 )
 
 pluginManagement {

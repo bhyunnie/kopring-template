@@ -7,7 +7,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Version
 
 @Entity
-data class Stock(
+class Stock(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	val id: Long = 0,
