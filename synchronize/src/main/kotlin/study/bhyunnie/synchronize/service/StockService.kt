@@ -11,6 +11,14 @@ import study.bhyunnie.synchronize.repository.StockRepository
 class StockService(
 	private val stockRepository: StockRepository
 ) {
+	fun decrease(id:Long, quantity: Long) {
+		val stock = stockRepository.findById(id).orElseThrow {
+			RuntimeException("재고 정보를 찾을 수 없습니다")
+		}
+		stock.decrease(quantity = quantity)
+		stockRepository.save(stock)
+	}
+
 	@Synchronized
 	fun synchronizedDecrease(id:Long, quantity:Long) {
 		val stock = stockRepository.findById(id).orElseThrow{
