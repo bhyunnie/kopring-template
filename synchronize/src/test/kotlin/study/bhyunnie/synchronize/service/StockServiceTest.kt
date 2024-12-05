@@ -11,6 +11,7 @@ import study.bhyunnie.synchronize.domain.Stock
 import study.bhyunnie.synchronize.facade.LettuceLockStockFacade
 import study.bhyunnie.synchronize.facade.NamedLockStockFacade
 import study.bhyunnie.synchronize.facade.OptimisticLockStockFacade
+import study.bhyunnie.synchronize.facade.RedissonLockStockFacade
 import study.bhyunnie.synchronize.repository.LockRepository
 import study.bhyunnie.synchronize.repository.StockRepository
 import java.util.concurrent.CountDownLatch
@@ -25,7 +26,8 @@ class StockServiceTest(
 	private val lockRepository: LockRepository,
 	private val optimisticLockStockFacade: OptimisticLockStockFacade,
 	private val namedLockStockFacade: NamedLockStockFacade,
-	private val lettuceLockStockFacade: LettuceLockStockFacade
+	private val lettuceLockStockFacade: LettuceLockStockFacade,
+	private val redissonLockStockFacade: RedissonLockStockFacade
 ) {
 	@BeforeEach
 	fun before() {
@@ -141,7 +143,7 @@ class StockServiceTest(
 	}
 
 	@Test
-	fun lettuceLock() {
+	fun testLettuceLock() {
 		val threadCount = 100
 		val executorService = Executors.newFixedThreadPool(32)
 		val latch = CountDownLatch(threadCount)
@@ -150,6 +152,31 @@ class StockServiceTest(
 			executorService.submit{
 				try {
 					lettuceLockStockFacade.decrease(1L, 1L)
+				} finally {
+					latch.countDown()
+				}
+			}
+		}
+
+		latch.await()
+
+		val stock = stockRepository.findById(1L).orElseThrow {
+			RuntimeException("재고를 찾을 수 없습니다")
+		}
+
+		assertEquals(0, stock.quantity)
+	}
+
+	@Test
+	fun testRedissonLock() {
+		val threadCount = 100
+		val executorService = Executors.newFixedThreadPool(32)
+		val latch = CountDownLatch(threadCount)
+
+		for (i in 0 until threadCount) {
+			executorService.submit{
+				try {
+					redissonLockStockFacade.decrease(1L, 1L)
 				} finally {
 					latch.countDown()
 				}
